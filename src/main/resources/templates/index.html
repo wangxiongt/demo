@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	xmlns:float="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8" />
+<title>ECharts</title>
+<link rel="stylesheet" type="text/css" href="css/easyui.css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/echarts-all.js"></script>
+<script type="text/javascript" src="js/echarts.min.js"></script>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/hebei.js"></script>
+<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+<script>
+	$(function() {
+		$('#tt1').tabs('resize', {
+			plain : false,
+			boder : false,
+			width : $(window).width() - 18,
+			height : $(window).height() - 18,
+		});
+	});
+	$(function() {
+		$('#tt1').tabs({
+			boder : false,
+			onSelect : function(title){
+				switch(title){
+				case "统计":
+					getStatisticDataList();
+					break;
+				case "统计1":
+					getStatisticDataList1();
+					break;
+				}
+		    }
+		});
+	});
+	function showfullclose(x){
+		if(document.body.scrollHeight+10 > window.screen.height&&document.body.scrollWidth == window.screen.width){
+			 
+		     x.style.opacity = 0.4;
+		     x.style.width = '100%';
+		     x.style.height = '64px';
+		};
+	};
+	function hidefullclose(x){
+		if(document.body.scrollHeight+10 > window.screen.height&&document.body.scrollWidth == window.screen.width){
+		     x.style.opacity = 0;
+		     x.style.width = '5%';
+		     x.style.height = '10px';
+		};
+	};
+	$(document).keydown(function(event){
+		 switch(event.keyCode) {
+		 case 122:
+		 case 27:
+			 checkscreen();
+		 }
+		});
+</script>
+<style>
+   #topclose{
+       width:5%;
+       height:10px;
+       background:black;
+       z-index:2;
+       position: absolute;
+       float:right;
+       opacity:0;
+       right:0;
+   }
+</style>
+
+
+</head>
+<body onload="getStatisticDataList()">
+    <div id="topclose" onmouseover="showfullclose(this)" onmouseleave="hidefullclose(this)">
+        <img src="img/closed.png" style="z-index:2;position: absolute;right:30px;" onclick="checkscreen()">
+    </div>
+	<div class="easyui-layout" data-options="fit:true">	
+		<div data-options="region:'center'" style="width: 100%; height: 100%">
+		    <input type = "button" id="fullscreen" onclick="checkscreen()" value="全屏显示"/>
+			<div id="tt1" class="easyui-tabs">
+				<div title="统计">
+					<table>
+						<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+						<div id="main" style="height: 645px"></div>
+						<!-- ECharts单文件引入 -->
+					</table>
+				</div>
+				<div title="统计1" style="padding:20px;">
+					<table>
+						<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+						<div id="main1" style="height: 645px"></div>
+						<!-- ECharts单文件引入 -->
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<script type="text/javascript">
+	function getStatisticDataList() {
+			var data1 = [];
+			var data2 = [];
+			 $.get('../js/hebei.json', function (qinhuangdaoJson) {
+			// 基于准备好的dom，初始化echarts图表
+			echarts.registerMap('秦皇岛市', qinhuangdaoJson);
+			
+			var myChart = echarts.init(document.getElementById('main'));
+			option = {
+				    title : {
+				        text: '2011全国GDP（亿元）',
+				        subtext: '数据来自国家统计局'
+				    },
+				    tooltip : {
+				        trigger: 'item'
+				    },
+				    legend: {
+				        x:'right',
+				        selectedMode:false,
+				        data:['北京','上海','广东']
+				    },
+				    dataRange: {
+				        orient: 'horizontal',
+				        min: 0,
+				        max: 55000,
+				        text:['高','低'],           // 文本，默认为数值文本
+				        splitNumber:0
+				    },
+				    toolbox: {
+				        show : true,
+				        orient: 'vertical',
+				        x:'right',
+				        y:'center',
+				        feature : {
+				            mark : {show: true},
+				            dataView : {show: true, readOnly: false}
+				        }
+				    },
+				    series : [
+				        {
+				            name: '2011全国GDP分布',
+				            type: 'map',
+				            mapType: '秦皇岛市',
+				            mapLocation: {
+				                x: 'left'
+				            },
+				            selectedMode : 'multiple',
+				            itemStyle:{
+				                normal:{label:{show:true}},
+				                emphasis:{label:{show:true}}
+				            },
+				            data:[
+				                {name:'西藏', value:605.83},
+				                {name:'青海', value:1670.44},
+				                {name:'宁夏', value:2102.21},
+				                {name:'海南', value:2522.66},
+				                {name:'甘肃', value:5020.37},
+				                {name:'贵州', value:5701.84},
+				                {name:'新疆', value:6610.05},
+				                {name:'云南', value:8893.12},
+				                {name:'重庆', value:10011.37},
+				                {name:'吉林', value:10568.83},
+				                {name:'山西', value:11237.55},
+				                {name:'天津', value:11307.28},
+				                {name:'江西', value:11702.82},
+				                {name:'广西', value:11720.87},
+				                {name:'陕西', value:12512.3},
+				                {name:'黑龙江', value:12582},
+				                {name:'内蒙古', value:14359.88},
+				                {name:'安徽', value:15300.65},
+				                {name:'北京', value:16251.93, selected:true},
+				                {name:'福建', value:17560.18},
+				                {name:'上海', value:19195.69, selected:true},
+				                {name:'湖北', value:19632.26},
+				                {name:'湖南', value:19669.56},
+				                {name:'四川', value:21026.68},
+				                {name:'辽宁', value:22226.7},
+				                {name:'河北', value:24515.76},
+				                {name:'河南', value:26931.03},
+				                {name:'浙江', value:32318.85},
+				                {name:'山东', value:45361.85},
+				                {name:'江苏', value:49110.27},
+				                {name:'广东', value:53210.28, selected:true}
+				            ]
+				        },
+				        {
+				            name:'2011全国GDP对比',
+				            type:'pie',
+				            roseType : 'area',
+				            tooltip: {
+				                trigger: 'item',
+				                formatter: "{a} <br/>{b} : {c} ({d}%)"
+				            },
+				            center: [document.getElementById('main').offsetWidth - 250, 225],
+				            radius: [30, 120],
+				            data:[
+				                {name: '北京', value: 16251.93},
+				                {name: '上海', value: 19195.69},
+				                {name: '广东', value: 53210.28}
+				            ]
+				        }
+				    ],
+				    animation: false
+				};
+			
+			setInterval(function() {
+				$.ajax({
+					url : "/girls/111",
+					type : "get",
+					datatype : "json",
+					success : function(res) {
+						data1 = [];
+						data2 = [];
+						for ( var i in res) {
+							data1.push(i);
+							data2.push({
+								"value" : res[i],
+								"name" : i
+							});
+						}
+						myChart.setOption(option);
+					}
+				})
+			}, 1000)
+		  })
+		}
+	function getStatisticDataList1() {
+		var data1 = [];
+		var data2 = [];
+		 $.get('../js/hebei.json', function (qinhuangdaoJson) {
+		// 基于准备好的dom，初始化echarts图表
+		echarts.registerMap('秦皇岛市', qinhuangdaoJson);
+		var myChart1 = echarts.init(document.getElementById('main1'));
+		option1 = {
+			    title : {
+			        text: '2011全国GDP（亿元）',
+			        subtext: '数据来自国家统计局'
+			    },
+			    tooltip : {
+			        trigger: 'item'
+			    },
+			    legend: {
+			        x:'right',
+			        selectedMode:false,
+			        data:['北京','上海','广东']
+			    },
+			    dataRange: {
+			        orient: 'horizontal',
+			        min: 0,
+			        max: 55000,
+			        text:['高','低'],           // 文本，默认为数值文本
+			        splitNumber:0
+			    },
+			    toolbox: {
+			        show : true,
+			        orient: 'vertical',
+			        x:'right',
+			        y:'center',
+			        feature : {
+			            mark : {show: true},
+			            dataView : {show: true, readOnly: false}
+			        }
+			    },
+			    series : [
+			        {
+			            name: '2011全国GDP分布',
+			            type: 'map',
+			            mapType: '秦皇岛市',
+			            mapLocation: {
+			                x: 'left'
+			            },
+			            selectedMode : 'multiple',
+			            itemStyle:{
+			                normal:{label:{show:true}},
+			                emphasis:{label:{show:true}}
+			            },
+			            data:[
+			                {name:'西藏', value:605.83},
+			                {name:'青海', value:1670.44},
+			                {name:'宁夏', value:2102.21},
+			                {name:'海南', value:2522.66},
+			                {name:'甘肃', value:5020.37},
+			                {name:'贵州', value:5701.84},
+			                {name:'新疆', value:6610.05},
+			                {name:'云南', value:8893.12},
+			                {name:'重庆', value:10011.37},
+			                {name:'吉林', value:10568.83},
+			                {name:'山西', value:11237.55},
+			                {name:'天津', value:11307.28},
+			                {name:'江西', value:11702.82},
+			                {name:'广西', value:11720.87},
+			                {name:'陕西', value:12512.3},
+			                {name:'黑龙江', value:12582},
+			                {name:'内蒙古', value:14359.88},
+			                {name:'安徽', value:15300.65},
+			                {name:'北京', value:16251.93, selected:true},
+			                {name:'福建', value:17560.18},
+			                {name:'上海', value:19195.69, selected:true},
+			                {name:'湖北', value:19632.26},
+			                {name:'湖南', value:19669.56},
+			                {name:'四川', value:21026.68},
+			                {name:'辽宁', value:22226.7},
+			                {name:'河北', value:24515.76},
+			                {name:'河南', value:26931.03},
+			                {name:'浙江', value:32318.85},
+			                {name:'山东', value:45361.85},
+			                {name:'江苏', value:49110.27},
+			                {name:'广东', value:53210.28, selected:true}
+			            ]
+			        },
+			        {
+			            name:'2011全国GDP对比',
+			            type:'pie',
+			            roseType : 'area',
+			            tooltip: {
+			                trigger: 'item',
+			                formatter: "{a} <br/>{b} : {c} ({d}%)"
+			            },
+			            center: [document.getElementById('main1').offsetWidth - 0, 225],
+			            radius: [30, 120],
+			            data:[
+			                {name: '北京', value: 16251.93},
+			                {name: '上海', value: 19195.69},
+			                {name: '广东', value: 53210.28}
+			            ]
+			        }
+			    ],
+			    animation: false
+			};
+		
+		setInterval(function() {
+			$.ajax({
+				url : "/girls/111",
+				type : "get",
+				datatype : "json",
+				success : function(res) {
+					data1 = [];
+					data2 = [];
+					for ( var i in res) {
+						data1.push(i);
+						data2.push({
+							"value" : res[i],
+							"name" : i
+						});
+					}
+					myChart1.setOption(option1);
+				}
+			})
+		}, 1000)
+	  })
+	}
+		function checkscreen(){
+			var button = document.getElementById("fullscreen");
+			
+			if(document.body.scrollHeight+10 > window.screen.height&&document.body.scrollWidth == window.screen.width){
+				button.value = "全屏显示";
+				exitFull();
+			}else{
+				button.value = "退出全屏";
+				fullscreen();
+			}
+		}
+		function fullscreen(){
+			var el = document.documentElement;
+			var rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullScreen;
+			debugger;
+			if(typeof rfs != "undefined" && rfs) {
+		        rfs.call(el);
+		        var button = document.getElementById("fullscreen");
+	            button.style.display = "none";
+		    } else if(typeof window.ActiveXObject != "undefined") {
+		        var wscript = new ActiveXObject("WScript.Shell");
+		        if(wscript != null) {
+		            wscript.SendKeys("{F11}");
+		        }
+		    }
+		}
+		function exitFull(){
+			var rfs1 = document.exitFullscreen || document.mozCancelFullScreen || document.webkitExitFullscreen || document.msExitFullscreen;
+			if(typeof rfs1 != "undefined" && rfs1) {
+		        rfs1.call(document);
+		        var button = document.getElementById("fullscreen");
+	            button.style.display = "block";
+	            var topclose = document.getElementById("topclose");
+	            topclose.style.opacity = 0;
+	            topclose.style.width = "5%";
+		    } else if(typeof window.ActiveXObject != "undefined") {
+		        var wscript1 = new ActiveXObject("WScript.Shell");
+		        if(wscript1 != null) {
+		            wscript.SendKeys("{F11}");
+		        }
+		    }
+		}
+	</script>
+</body>
+</html>
